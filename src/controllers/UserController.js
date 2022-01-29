@@ -48,6 +48,27 @@ class UserController {
       return res.status(500).json({ message: 'Internal server error.' });
     }
   }
+
+  /** método responsável por logar o usuário */
+  async login(req, res) {
+    const { email, password } = req.body;
+
+    if (!email) return res.status(422).json({ message: 'Email is riquired!' });
+    if (!validator.isEmail(email))
+      return res.status(422).json({ message: 'Email invalid!' });
+
+    if (!password)
+      return res.status(422).json({ message: 'Password is riquired!' });
+
+    /** verificar se o usuário existe */
+    const user = await User.findOne({ email });
+    if (!user) return res.status(422).json({ message: 'User not found!' });
+
+    /** verificar se a senha confere com a do banco */
+    const checkPassword = await bcryptjs.compare(password, user.password);
+    if (!checkPassword)
+      return res.status(422).json({ message: 'Invalid password!' });
+  }
 }
 
 export default new UserController();
