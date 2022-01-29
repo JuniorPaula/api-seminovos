@@ -98,6 +98,11 @@ class UserController {
 
     return res.status(200).send(currentUser);
   }
+
+  /** método responsável por editar um usuário */
+  async update(req, res) {
+    return res.status(200).json({ message: 'User found!' });
+  }
 }
 
 export default new UserController();
