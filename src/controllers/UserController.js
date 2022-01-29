@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User';
 import createUserToken from '../utils/create-user-token';
 import getToken from '../utils/get-token';
+import { getUserByToken } from '../utils/get-user-by-token';
 
 class UserController {
   /** método responsável por registrar um usuário */
@@ -101,7 +102,31 @@ class UserController {
 
   /** método responsável por editar um usuário */
   async update(req, res) {
-    return res.status(200).json({ message: 'User found!' });
+    //const id = req.params.id;
+
+    /** verificar o usuário pelo token */
+    const token = getToken(req);
+    const user = await getUserByToken(token);
+
+    const { name, email, password, confirmPassword } = req.body;
+    const image = '';
+
+    /** verificar o que vem do body */
+    if (!name) return res.status(422).json({ message: 'Name is riquired!' });
+    if (!email) return res.status(422).json({ message: 'Email is riquired!' });
+    if (!validator.isEmail(email))
+      return res.status(422).json({ message: 'Email invalid!' });
+
+    /** verificar se o email ja está sendo usado */
+    const userExist = await User.findOne({ email });
+    if (user.email !== email && userExist)
+      return res.status(422).json({ message: 'Please, user another email!' });
+
+    if (!password)
+      return res.status(422).json({ message: 'Password is riquired!' });
+
+    if (!confirmPassword)
+      return res.status(422).json({ message: 'Confirm password is riquired!' });
   }
 }
 
