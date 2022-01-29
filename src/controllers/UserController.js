@@ -72,6 +72,16 @@ class UserController {
       return res.status(422).json({ message: 'Invalid password!' });
   }
 
+  /** método responsável por listar um usuário por ID */
+  async show(req, res) {
+    const { id } = req.params;
+
+    const user = await User.findById(id).select('-password');
+    if (!user) return res.status(422).json({ message: 'User not found!' });
+
+    return res.status(200).json(user);
+  }
+
   /** método responsável por resgatar o token to usuário */
   async checkUser(req, res) {
     let currentUser;
