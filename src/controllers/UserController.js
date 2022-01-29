@@ -69,6 +69,20 @@ class UserController {
     if (!checkPassword)
       return res.status(422).json({ message: 'Invalid password!' });
   }
+
+  /** método responsável por resgatar o token to usuário */
+  async checkUser(req, res) {
+    let currentUser;
+
+    console.log(req.headers.authorization);
+    if (req.headers.authorization) {
+      //
+    } else {
+      currentUser = null;
+    }
+
+    return res.status(200).send(currentUser);
+  }
 }
 
 export default new UserController();
