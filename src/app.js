@@ -2,6 +2,8 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 
+import usersRoutes from './routes/usersRoutes';
+
 class App {
   constructor() {
     this.app = express();
@@ -15,7 +17,9 @@ class App {
     this.app.use(express.json());
   }
 
-  routes() {}
+  routes() {
+    this.app.use('/users', usersRoutes);
+  }
 }
 
 export default new App().app;
