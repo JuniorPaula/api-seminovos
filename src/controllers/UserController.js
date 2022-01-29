@@ -1,7 +1,9 @@
 import bcryptjs from 'bcryptjs';
 import validator from 'validator';
+import jwt from 'jsonwebtoken';
 import User from '../models/User';
 import createUserToken from '../utils/create-user-token';
+import getToken from '../utils/get-token';
 
 class UserController {
   /** método responsável por registrar um usuário */
@@ -74,9 +76,12 @@ class UserController {
   async checkUser(req, res) {
     let currentUser;
 
-    console.log(req.headers.authorization);
     if (req.headers.authorization) {
-      //
+      const token = getToken(req);
+      const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+
+      currentUser = await User.findById(decoded.id);
+      currentUser.password = undefined;
     } else {
       currentUser = null;
     }
