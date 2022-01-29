@@ -109,10 +109,12 @@ class UserController {
     const user = await getUserByToken(token);
 
     const { name, email, password, confirmPassword } = req.body;
-    const image = '';
+    //const image = '';
 
     /** verificar o que vem do body */
     if (!name) return res.status(422).json({ message: 'Name is riquired!' });
+    user.name = name;
+
     if (!email) return res.status(422).json({ message: 'Email is riquired!' });
     if (!validator.isEmail(email))
       return res.status(422).json({ message: 'Email invalid!' });
@@ -121,12 +123,31 @@ class UserController {
     const userExist = await User.findOne({ email });
     if (user.email !== email && userExist)
       return res.status(422).json({ message: 'Please, user another email!' });
+    user.email = email;
 
-    if (!password)
-      return res.status(422).json({ message: 'Password is riquired!' });
+    if (password !== confirmPassword) {
+      return res.status(422).json({ message: 'Passwords must be the same!' });
+    } else if (password === confirmPassword && password !== null) {
+      /** criptografar a senha */
+      const salt = await bcryptjs.genSalt(12);
+      const passwordHashed = await bcryptjs.hash(password, salt);
 
-    if (!confirmPassword)
-      return res.status(422).json({ message: 'Confirm password is riquired!' });
+      user.password = passwordHashed;
+    }
+
+    try {
+      await User.findOneAndUpdate(
+        { _id: user._id },
+        { $set: user },
+        { new: true },
+      );
+
+      return res
+        .status(200)
+        .json({ message: 'User successfully updated', user });
+    } catch (err) {
+      return res.status(500).json({ message: 'Internal server error' });
+    }
   }
 }
 
