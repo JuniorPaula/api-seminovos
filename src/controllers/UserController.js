@@ -1,6 +1,7 @@
 import bcryptjs from 'bcryptjs';
 import validator from 'validator';
 import User from '../models/User';
+import createUserToken from '../utils/create-user-token';
 
 class UserController {
   /** método responsável por registrar um usuário */
@@ -42,9 +43,7 @@ class UserController {
     try {
       const newUser = await user.save();
 
-      return res
-        .status(201)
-        .json({ message: 'user created successfully', newUser });
+      await createUserToken(newUser, req, res);
     } catch (err) {
       return res.status(500).json({ message: 'Internal server error.' });
     }
