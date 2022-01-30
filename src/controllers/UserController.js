@@ -71,6 +71,8 @@ class UserController {
     const checkPassword = await bcryptjs.compare(password, user.password);
     if (!checkPassword)
       return res.status(422).json({ message: 'Invalid password!' });
+
+    await createUserToken(user, req, res);
   }
 
   /** método responsável por listar um usuário por ID */
