@@ -9,6 +9,17 @@ class CarsController {
     return res.status(200).json(cars);
   }
 
+  /** método responsável por listar todos os carros
+   * pertencente ao usuario */
+  async getAllUserCar(req, res) {
+    /** recuperar o usuário pelo token */
+    const token = getToken(req);
+    const user = await getUserByToken(token);
+
+    const cars = await Car.find({ 'user._id': user._id }).sort('createdAt');
+    return res.status(200).json(cars);
+  }
+
   /** método responsável por criar um carro */
   async create(req, res) {
     const { model, brand, color, description, km, year, price } = req.body;
