@@ -109,7 +109,12 @@ class UserController {
     const user = await getUserByToken(token);
 
     const { name, email, password, confirmPassword } = req.body;
-    //const image = '';
+
+    /** upload de imagem do usuário */
+
+    if (req.file) {
+      user.image = req.file.filename;
+    }
 
     /** verificar o que vem do body */
     if (!name) return res.status(422).json({ message: 'Name is riquired!' });

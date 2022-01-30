@@ -12,9 +12,10 @@ class App {
   }
 
   middlewares() {
-    this.app.use(cors());
+    this.app.use(cors({ credentials: true, origin: process.env.URL_FRONTEND }));
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
+    this.app.use(express.static('public'));
   }
 
   routes() {
