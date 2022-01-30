@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 
 import usersRoutes from './routes/usersRoutes';
+import carsRoutes from './routes/carsRoutes';
 
 class App {
   constructor() {
@@ -20,6 +21,7 @@ class App {
 
   routes() {
     this.app.use('/users', usersRoutes);
+    this.app.use('/cars', carsRoutes);
   }
 }
 
