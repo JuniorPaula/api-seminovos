@@ -37,9 +37,11 @@ class CarsController {
   async show(req, res) {
     const { id } = req.params;
 
+    /** verificar se o id é valido */
     if (!ObjectId.Types.ObjectId.isValid(id))
       return res.status(422).json({ message: 'Invalid ID!' });
 
+    /** verificar se o carro existe */
     const car = await Car.findOne({ _id: id });
     if (!car) return res.status(404).json({ message: 'car not found!' });
 
@@ -100,6 +102,33 @@ class CarsController {
     } catch (err) {
       return res.status(500).json({ message: 'Internal server error!' });
     }
+  }
+
+  /** método responsável por deletar um carro */
+  async remove(req, res) {
+    const { id } = req.params;
+
+    /** verificar se o id é valido */
+    if (!ObjectId.Types.ObjectId.isValid(id))
+      return res.status(422).json({ message: 'Invalid ID!' });
+
+    /** verificar se o carro existe */
+    const car = await Car.findOne({ _id: id });
+    if (!car) return res.status(404).json({ message: 'car not found!' });
+
+    /** veriricar se o usuário registrou o carro */
+    const token = getToken(req);
+    const user = await getUserByToken(token);
+
+    if (car.user._id.toString() !== user._id.toString()) {
+      return res.status(422).json({
+        message:
+          'There was a problem with your request, please try again later!',
+      });
+    }
+
+    await Car.findByIdAndRemove(id);
+    return res.status(200).json({ message: 'Successfully deleted car' });
   }
 }
 

@@ -15,5 +15,6 @@ router.post(
   imageUpload.array('images'),
   CarsController.create,
 );
+router.delete('/:id', verifyToken, CarsController.remove);
 
 export default router;
