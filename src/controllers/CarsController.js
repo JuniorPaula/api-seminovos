@@ -6,6 +6,7 @@ class CarsController {
   /** método responsável por criar um carro */
   async create(req, res) {
     const { model, brand, color, description, km, year, price } = req.body;
+    const images = req.files;
     const available = true;
 
     /** uploads de images dos carros */
@@ -20,6 +21,9 @@ class CarsController {
     if (!km) return res.status(422).json({ message: 'KM is required!' });
     if (!year) return res.status(422).json({ message: 'Year is required!' });
     if (!price) return res.status(422).json({ message: 'Price is required!' });
+    if (images.length === 0) {
+      return res.status(422).json({ message: 'Images is required!' });
+    }
 
     /** recuperar o usuário dono do carro pelo token */
     const token = getToken(req);
@@ -42,6 +46,8 @@ class CarsController {
         image: user.image,
       },
     });
+
+    images.map((image) => car.image.push(image.filename));
 
     try {
       const newCar = await car.save();
