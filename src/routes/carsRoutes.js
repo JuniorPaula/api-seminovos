@@ -5,6 +5,7 @@ import imageUpload from '../config/multer-config';
 
 const router = Router();
 
+router.get('/', CarsController.index);
 router.post(
   '/create',
   verifyToken,

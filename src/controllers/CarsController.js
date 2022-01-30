@@ -3,6 +3,12 @@ import getToken from '../utils/get-token';
 import { getUserByToken } from '../utils/get-user-by-token';
 
 class CarsController {
+  /** método responsável por listar todos os carros */
+  async index(req, res) {
+    const cars = await Car.find().sort('-createdAt');
+    return res.status(200).json(cars);
+  }
+
   /** método responsável por criar um carro */
   async create(req, res) {
     const { model, brand, color, description, km, year, price } = req.body;
