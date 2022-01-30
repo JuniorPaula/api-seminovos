@@ -22,6 +22,7 @@ router.patch(
   CarsController.update,
 );
 router.patch('/schedule/:id', verifyToken, CarsController.schedule);
+router.patch('/conclude/:id', verifyToken, CarsController.concludeBuyer);
 router.delete('/:id', verifyToken, CarsController.remove);
 
 export default router;

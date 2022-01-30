@@ -225,6 +225,34 @@ class CarsController {
       message: `You have scheduled a visit to the car: ${car.model} ${car.brand}`,
     });
   }
+
+  /** método responsável por concluir uma venda */
+  async concludeBuyer(req, res) {
+    const { id } = req.params;
+
+    /** verificar se o carro existe */
+    const car = await Car.findOne({ _id: id });
+    if (!car) return res.status(404).json({ message: 'car not found!' });
+
+    /** veriricar se o usuário registrou o carro */
+    const token = getToken(req);
+    const user = await getUserByToken(token);
+
+    if (car.user._id.toString() !== user._id.toString()) {
+      return res.status(422).json({
+        message:
+          'There was a problem with your request, please try again later!',
+      });
+    }
+
+    car.available = false;
+
+    await Car.findByIdAndUpdate(id, car);
+
+    return res
+      .status(200)
+      .json({ message: 'congratulations, you complete the sale!' });
+  }
 }
 
 export default new CarsController();
