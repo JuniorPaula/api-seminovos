@@ -54,8 +54,6 @@ class CarsController {
     const images = req.files;
     const available = true;
 
-    /** uploads de images dos carros */
-
     /** validações */
     if (!model) return res.status(422).json({ message: 'Model is required!' });
     if (!brand) return res.status(422).json({ message: 'Brand is required!' });
@@ -102,6 +100,64 @@ class CarsController {
     } catch (err) {
       return res.status(500).json({ message: 'Internal server error!' });
     }
+  }
+
+  /** método responsável por atualizar um carro */
+  async update(req, res) {
+    const { id } = req.params;
+    const { model, brand, color, description, km, year, price } = req.body;
+    const images = req.files;
+
+    const updatedData = {};
+
+    /** verificar se o carro existe */
+    const car = await Car.findOne({ _id: id });
+    if (!car) return res.status(404).json({ message: 'car not found!' });
+
+    /** veriricar se o usuário registrou o carro */
+    const token = getToken(req);
+    const user = await getUserByToken(token);
+
+    if (car.user._id.toString() !== user._id.toString()) {
+      return res.status(422).json({
+        message:
+          'There was a problem with your request, please try again later!',
+      });
+    }
+
+    /** validações */
+    if (!model) return res.status(422).json({ message: 'Model is required!' });
+    updatedData.model = model;
+
+    if (!brand) return res.status(422).json({ message: 'Brand is required!' });
+    updatedData.brand = brand;
+
+    if (!color) return res.status(422).json({ message: 'Color is required!' });
+    updatedData.color = color;
+
+    if (!description)
+      return res.status(422).json({ message: 'Description is required!' });
+    updatedData.description = description;
+
+    if (!km) return res.status(422).json({ message: 'KM is required!' });
+    updatedData.km = km;
+
+    if (!year) return res.status(422).json({ message: 'Year is required!' });
+    updatedData.year = year;
+
+    if (!price) return res.status(422).json({ message: 'Price is required!' });
+    updatedData.price = price;
+
+    if (images.length === 0) {
+      return res.status(422).json({ message: 'Images is required!' });
+    } else {
+      updatedData.images = [];
+      images.map((image) => updatedData.images.push(image.filename));
+    }
+
+    await Car.findByIdAndUpdate(id, updatedData);
+
+    return res.status(200).json({ message: 'Successfully updated car' });
   }
 
   /** método responsável por deletar um carro */

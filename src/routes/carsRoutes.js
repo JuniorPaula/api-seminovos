@@ -15,6 +15,12 @@ router.post(
   imageUpload.array('images'),
   CarsController.create,
 );
+router.patch(
+  '/edit/:id',
+  verifyToken,
+  imageUpload.array('images'),
+  CarsController.update,
+);
 router.delete('/:id', verifyToken, CarsController.remove);
 
 export default router;
