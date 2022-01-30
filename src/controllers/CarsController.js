@@ -1,6 +1,7 @@
 import Car from '../models/Car';
 import getToken from '../utils/get-token';
 import { getUserByToken } from '../utils/get-user-by-token';
+import ObjectId from 'mongoose';
 
 class CarsController {
   /** método responsável por listar todos os carros */
@@ -30,6 +31,19 @@ class CarsController {
 
     const cars = await Car.find({ 'buyer._id': user._id }).sort('createdAt');
     return res.status(200).json(cars);
+  }
+
+  /** método responsável por listar um carro pelo id */
+  async show(req, res) {
+    const { id } = req.params;
+
+    if (!ObjectId.Types.ObjectId.isValid(id))
+      return res.status(422).json({ message: 'Invalid ID!' });
+
+    const car = await Car.findOne({ _id: id });
+    if (!car) return res.status(404).json({ message: 'car not found!' });
+
+    return res.status(200).json(car);
   }
 
   /** método responsável por criar um carro */

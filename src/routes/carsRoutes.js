@@ -8,6 +8,7 @@ const router = Router();
 router.get('/', CarsController.index);
 router.get('/owncars', verifyToken, CarsController.getAllUserCar);
 router.get('/ownbuyer', verifyToken, CarsController.getAllUserBuyer);
+router.get('/:id', CarsController.show);
 router.post(
   '/create',
   verifyToken,
