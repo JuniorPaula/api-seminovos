@@ -21,6 +21,7 @@ router.patch(
   imageUpload.array('images'),
   CarsController.update,
 );
+router.patch('/schedule/:id', verifyToken, CarsController.schedule);
 router.delete('/:id', verifyToken, CarsController.remove);
 
 export default router;

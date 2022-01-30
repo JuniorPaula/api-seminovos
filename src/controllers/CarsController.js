@@ -186,6 +186,45 @@ class CarsController {
     await Car.findByIdAndRemove(id);
     return res.status(200).json({ message: 'Successfully deleted car' });
   }
+
+  /** método responsável por agenda visita de compra */
+  async schedule(req, res) {
+    const { id } = req.params;
+
+    /** verificar se o carro existe */
+    const car = await Car.findOne({ _id: id });
+    if (!car) return res.status(404).json({ message: 'car not found!' });
+
+    /** veriricar se o usuário registrou o carro */
+    const token = getToken(req);
+    const user = await getUserByToken(token);
+
+    if (car.user._id.equals(user._id)) {
+      return res.status(422).json({
+        message: 'You cannot schedule a visit for your own car!',
+      });
+    }
+
+    /** verificar se o usuário ja agendou uma visita */
+    if (car.buyer) {
+      if (car.buyer._id.equals(user._id)) {
+        return res.status(422).json({
+          message: 'You have already scheduled a visit!',
+        });
+      }
+    }
+
+    car.buyer = {
+      _id: user._id,
+      name: user.name,
+      image: user.image,
+    };
+
+    await Car.findByIdAndUpdate(id, car);
+    return res.status(200).json({
+      message: `You have scheduled a visit to the car: ${car.model} ${car.brand}`,
+    });
+  }
 }
 
 export default new CarsController();
