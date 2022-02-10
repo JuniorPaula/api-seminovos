@@ -127,17 +127,21 @@ class UserController {
       return res.status(422).json({ message: 'Email invalid!' });
 
     /** verificar se o email ja está sendo usado */
-    const userExist = await User.findOne({ email });
-    if (user.email !== email && userExist)
+    const userExist = await User.findOne({ email: email });
+    if (user.email !== email && userExist) {
       return res.status(422).json({ message: 'Please, user another email!' });
+    }
+
     user.email = email;
 
     if (password !== confirmPassword) {
       return res.status(422).json({ message: 'Passwords must be the same!' });
-    } else if (password === confirmPassword && password !== null) {
+    } else if (password === confirmPassword && password != null) {
       /** criptografar a senha */
       const salt = await bcryptjs.genSalt(12);
-      const passwordHashed = await bcryptjs.hash(password, salt);
+      const reqPassword = req.body.password;
+
+      const passwordHashed = await bcryptjs.hash(reqPassword, salt);
 
       user.password = passwordHashed;
     }
