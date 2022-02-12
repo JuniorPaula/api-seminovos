@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import { resolve } from 'path';
 
 import usersRoutes from './routes/usersRoutes';
 import carsRoutes from './routes/carsRoutes';
@@ -16,7 +17,10 @@ class App {
     this.app.use(cors({ credentials: true, origin: process.env.URL_FRONTEND }));
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
-    this.app.use(express.static('public'));
+    this.app.use(
+      '/images/',
+      express.static(resolve(__dirname, 'public', 'images')),
+    );
   }
 
   routes() {
