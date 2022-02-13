@@ -90,7 +90,7 @@ class CarsController {
       },
     });
 
-    images.map((image) => car.image.push(image.filename));
+    images.map((image) => car.images.push(image.filename));
 
     try {
       const newCar = await car.save();
@@ -148,9 +148,7 @@ class CarsController {
     if (!price) return res.status(422).json({ message: 'Price is required!' });
     updatedData.price = price;
 
-    if (images.length === 0) {
-      return res.status(422).json({ message: 'Images is required!' });
-    } else {
+    if (images.length > 0) {
       updatedData.images = [];
       images.map((image) => updatedData.images.push(image.filename));
     }

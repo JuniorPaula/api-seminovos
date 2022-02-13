@@ -12,7 +12,7 @@ const Car = mongoose.model(
       km: { type: Number, required: true },
       year: { type: Number, required: true },
       price: { type: Number, required: true },
-      image: { type: Array, required: true },
+      images: { type: Array, required: true },
       available: { type: Boolean },
       user: Object,
       buyer: Object,
